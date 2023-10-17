@@ -1,14 +1,16 @@
 import java.util.Scanner;
 
 class AccountHolder {
+    static Scanner sc = new Scanner(System.in);
     static int num_accounts = 0;
+    static AccountHolder[] accounts = new AccountHolder[1000];
     
     private int account_number;
     private String name;
     private float balance;
 
     public AccountHolder(int account_number, String name, float balance) {
-        this.account_number = account_number;
+        this.account_number = account_number+1;
         this.name = name;
         this.balance = balance;
         num_accounts+=1;
@@ -60,31 +62,24 @@ class AccountHolder {
     public String toString() {
         return "[account_number=" + account_number + ", name=" + name + ", balance=" + balance + "]";
     }
+
+
+    public static void create_account(){
+        System.out.println("Enter account holders name:");
+        String name = sc.nextLine();
+        accounts[AccountHolder.num_accounts] = new AccountHolder(num_accounts,name,0);
+    }
     
     
 }
 
 public class Q5 {
     public static void main(String[] args) {
-        AccountHolder account = new AccountHolder();
-        account.deposit(10000);
-        // System.out.println(account.getBalance());
-        account.withdraw(10000);
-        // System.out.println(account.getBalance());
-
-        AccountHolder[] accounts = new AccountHolder[10];
-        int def_acc_num = 1000;
-        String def_acc_name = "John Doe";
-        float def_acc_bal = 0;
-        for(int i=0;i<accounts.length;i++){
-            accounts[i] = new AccountHolder(def_acc_num+i,def_acc_name,def_acc_bal);
-        }
-
-        menu(accounts);
+        menu();
 
     }
 
-    public static void menu(AccountHolder[] accounts){
+    public static void menu(){
         int choice;
         int flag=0;
         while(flag!=-1){
@@ -100,37 +95,42 @@ public class Q5 {
                 // TODO: Adding a record to array of account holders
                 // maybe write a static AccountHolder method which will be used to create the account which will update (add) the object of newly created object
                 // to the static AccountHolder array in that class itself
-
+                AccountHolder.create_account();
                 break;
 
             case 2:
                 System.out.println("Details of all accounts");
-                for (AccountHolder acc:accounts){
-                    System.out.println(acc);
+                for (int i=0;i<AccountHolder.num_accounts;i++){
+                    System.out.println(AccountHolder.accounts[i]);
                 }
                 break;
 
             case 3:
                 System.out.println("Enter your account number for deposit");
                 int acc_num = sc.nextInt();
-                for(int i=0;i<accounts.length;i++){
-                    if(accounts[i].getAccount_number()==acc_num){
+                for(int i=0;i<AccountHolder.num_accounts;i++){
+                    if(AccountHolder.accounts[i].getAccount_number()==acc_num){
                         System.out.println("Enter how much amount you want to deposit");
                         float amount = sc.nextFloat();
-                        accounts[i].deposit(amount);
+                        AccountHolder.accounts[i].deposit(amount);
                     }
+                if (i==AccountHolder.num_accounts-1){
+                    System.out.println("Account not found");
+                }
                 }    
                     break;
                 case 4:
                     System.out.println("Enter your account number for withdrawl");
                     acc_num = sc.nextInt();
-                    
-                    for(int i=0;i<accounts.length;i++){
-                        if(accounts[i].getAccount_number()==acc_num){
+                    for(int i=0;i<AccountHolder.num_accounts;i++){
+                        if(AccountHolder.accounts[i].getAccount_number()==acc_num){
                             System.out.println("Enter how much amount you want to wihtdraw");
                             float amount = sc.nextFloat();
-                            accounts[i].withdraw(amount);
+                            AccountHolder.accounts[i].withdraw(amount);
                         }
+                    if(i==AccountHolder.num_accounts-1){
+                        System.out.println("Account not found");
+                    } 
                     }    
                     break;
 
