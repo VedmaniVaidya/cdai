@@ -1,39 +1,40 @@
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Scanner;
 
 
 public class UtilityList {
-    public static void main(String[] args) {
-        ArrayList<Student> students = new ArrayList<>();
-        createList(students);
-        printlist(students);
+    
+    private ArrayList<Student> students;
+
+    
         
+    public UtilityList() {
+        students = new ArrayList<>();
     }
 
-    public static void sortByRollno(ArrayList<Student> students){
+    public  void sortByRollno(){
            Collections.sort(students);
            for(Student std:students){
             System.out.println(std);
            }
     }
 
-    public static void sortByPercentage(ArrayList<Student> students){
+    public void sortByPercentage(){
            Collections.sort(students,new StudentComparatorByPercentage());
            for(Student std:students){
             System.out.println(std);
            }
     }
 
-    private static void printlist(ArrayList<Student> students) {
+    public void printlist() {
         for(Student st:students){
             System.out.println(st);
         }
     }
 
-    public static void createList(ArrayList<Student> students){
+    public  void createList(){
         Scanner sc = new Scanner(System.in);
         
         for(int i = 0;i<5;i++){
@@ -46,7 +47,7 @@ public class UtilityList {
       
     }
 
-    private static HashSet<String> getHobbies() {
+    private  HashSet<String> getHobbies() {
         HashSet<String> hobbies = new HashSet<>();
         Scanner sc = new Scanner(System.in);
         System.out.println("enter number of hobbies");
@@ -55,6 +56,10 @@ public class UtilityList {
            hobbies.add(sc.next());
         }
         return hobbies;
+    }
+
+    public ArrayList<Student> getStudents() {
+        return students;
     }
 
 }

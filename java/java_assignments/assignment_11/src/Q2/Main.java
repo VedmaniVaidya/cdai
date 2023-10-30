@@ -1,61 +1,75 @@
 package Q2;
-import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Scanner;
 
-public class Main {
-    public static void main(String[] args) {
+class ReadFile implements Runnable {
+    private String sourceFile;
+    private FileWriter writer;
+    private Object lock;
+
+    public ReadFile(String sourceFile, FileWriter writer, Object lock) {
+        this.sourceFile = sourceFile;
+        this.writer = writer;
+        this.lock = lock;
+    }
+
+    public void run() {
         try {
-            // Create a Scanner object to read the file
-            File inputFile = new File("/home/dai/java/assignment_11/src/Q2/src.txt");
-            Scanner scanner = new Scanner(inputFile);
-
-            // Create a FileWriter object to write to the new file
-            File outputFile = new File("/home/dai/java/assignment_11/src/Q2/dest.txt");
-            FileWriter writer = new FileWriter(outputFile);
-
-            // Create a separate thread for reading from the input file
-            Thread readerThread = new Thread(new ReaderRunnable(scanner, writer));
-
-            // Start the reader thread
-            readerThread.start();
-
-            // Wait for the reader thread to finish
-            readerThread.join();
-
-            System.out.println("New file created successfully.");
-        } catch (IOException | InterruptedException e) {
+            FileReader reader = new FileReader(sourceFile);
+            int character;
+            while ((character = reader.read()) != -1) {
+                writer.write(character);
+            }
+            reader.close();
+            synchronized (lock) {
+                lock.notify();
+            }
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
+}
 
-    // Runnable implementation for reading from the input file
-    static class ReaderRunnable implements Runnable {
-        private Scanner scanner;
-        private FileWriter writer;
+class WriteFile implements Runnable {
+    private String destinationFile;
+    private FileWriter writer;
+    private Object lock;
 
-        public ReaderRunnable(Scanner scanner, FileWriter writer) {
-            this.scanner = scanner;
-            this.writer = writer;
-        }
+    public WriteFile(String destinationFile, FileWriter writer, Object lock) {
+        this.destinationFile = destinationFile;
+        this.writer = writer;
+        this.lock = lock;
+    }
 
-        @Override
-        public void run() {
-            try {
-                while (scanner.hasNextLine()) {
-                    String line = scanner.nextLine();
-                    // You can process the line here if needed
-                    synchronized (writer) {
-                        writer.write(line);
-                        writer.write(System.lineSeparator()); // Add line separator after each line
-                    }
-                }
-                scanner.close();
-                writer.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+    public void run() {
+        try {
+            synchronized (lock) {
+                lock.wait();
             }
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        String sourceFile = "/home/dai/java/assignment_11/src/Q2/src.txt";
+        String destinationFile = "/home/dai/java/assignment_11/src/Q2/dest.txt";
+        Object lock = new Object();
+
+        try {
+            FileWriter writer = new FileWriter(destinationFile, true);
+            Thread readThread = new Thread(new ReadFile(sourceFile, writer, lock));
+            Thread writeThread = new Thread(new WriteFile(destinationFile, writer, lock));
+            readThread.start();
+            writeThread.start();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

@@ -1,5 +1,3 @@
-package set_assignment;
-
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.Set;

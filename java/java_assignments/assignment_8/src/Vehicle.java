@@ -1,5 +1,3 @@
-package set_assignment;
-
 public class Vehicle implements Comparable<Vehicle>{
 
     private int vehicle_no;
