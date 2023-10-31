@@ -1,0 +1,1 @@
+https://www.kaggle.com/code/vishnurapps/undersanding-kfold-stratifiedkfold-and-groupkfold
