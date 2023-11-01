@@ -38,3 +38,8 @@ azure ai fundamentals course
 
 
 add genai to linkedin profile
+
+
+#-----------------------------------
+https://www.youtube.com/watch?v=oR98Ookq3bc
+How To Get Bing API Keys For Fastai Book
