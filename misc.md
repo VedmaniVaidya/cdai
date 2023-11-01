@@ -43,3 +43,5 @@ add genai to linkedin profile
 #-----------------------------------
 https://www.youtube.com/watch?v=oR98Ookq3bc
 How To Get Bing API Keys For Fastai Book
+
+https://www.kaggle.com/code/vishnurapps/undersanding-kfold-stratifiedkfold-and-groupkfold
