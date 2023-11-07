@@ -7,3 +7,4 @@ peft
 evaluate
 accelerate
 torchmetrics
+ipywidgets
