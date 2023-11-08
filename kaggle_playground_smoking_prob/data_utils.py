@@ -5,12 +5,15 @@ from sklearn.model_selection import StratifiedKFold
 
 import pandas as pd
 import numpy as np
+import torch
 
 from typing import Tuple
 import os
 
 
 from torch.utils.data import Dataset, DataLoader
+
+torch.multiprocessing.set_sharing_strategy('file_system')
 
 def prepare_train(df: pd.DataFrame) -> Tuple[np.ndarray, np.ndarray, StandardScaler]:
     """
@@ -105,8 +108,8 @@ def get_data_loaders(X: np.ndarray, y: np.ndarray, batch_size = 32) -> Tuple[Dat
     X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=42, shuffle=True, stratify=y)
     train_dataset = CustomDataset(X_train, y_train)
     val_dataset = CustomDataset(X_test, y_test)
-    train_loader = DataLoader(train_dataset, batch_size=batch_size, num_workers=os.cpu_count(), pin_memory=True)
-    val_loader = DataLoader(val_dataset, batch_size=batch_size, num_workers=os.cpu_count(), pin_memory=True)
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, num_workers=4, pin_memory=True)
+    val_loader = DataLoader(val_dataset, batch_size=batch_size, num_workers=4, pin_memory=True)
     return train_loader, val_loader
 
 
@@ -121,7 +124,14 @@ def get_cv_data_loaders(X, y, n_splits=5, batch_size=32):
         train_dataset = CustomDataset(X_train, y_train)
         val_dataset = CustomDataset(X_val, y_val)
 
-        train_loader = DataLoader(train_dataset, batch_size=32, num_workers=os.cpu_count(), pin_memory=True)
-        val_loader = DataLoader(val_dataset, batch_size=32, num_workers=os.cpu_count(), pin_memory=True)
+        train_loader = DataLoader(train_dataset, batch_size=32, num_workers=4, pin_memory=True)
+        val_loader = DataLoader(val_dataset, batch_size=32, num_workers=4, pin_memory=True)
 
         yield train_loader, val_loader
+
+
+def get_train_dataloaders(X: np.ndarray, y: np.ndarray, batch_size = 32) -> Tuple[DataLoader, DataLoader]:
+
+    train_dataset = CustomDataset(X, y)
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, num_workers=4, pin_memory=True)
+    return train_loader
