@@ -5,7 +5,7 @@ from tqdm import tqdm
 
 from tqdm import tqdm
 
-def training_step(model, train_loader, loss_fn, optimizer, device, scheduler=None):
+def training_step(model, train_loader, loss_fn, optimizer, device):
     #Training
     model.train()
     accumulated_loss = 0
@@ -26,9 +26,7 @@ def training_step(model, train_loader, loss_fn, optimizer, device, scheduler=Non
         except Exception as e:
             print(f'Error occurred in batch {idx}: {e}')
     average_loss = accumulated_loss/len(train_loader)
-    if scheduler is not None:
-        scheduler.step(average_loss)
-    return average_loss, model, optimizer, scheduler
+    return average_loss, model, optimizer
 
 
 def validation_step(model, val_loader, device, **metric):

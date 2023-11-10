@@ -46,17 +46,46 @@ class ClsModel2(nn.Module):
     def __init__(self, input_size, hidden_size, num_classes, dropout_rate=0.3):
         super().__init__()
         self.model = nn.Sequential(
-          nn.Linear(in_features=input_size, out_features=hidden_size, dtype=torch.float64),
+          nn.Linear(in_features=input_size, out_features=hidden_size*2, dtype=torch.float64),
           nn.LeakyReLU(),
-          nn.BatchNorm1d(hidden_size,dtype=torch.float64),
-          nn.Linear(in_features=hidden_size, out_features=hidden_size*2, dtype=torch.float64),
-          nn.LeakyReLU(),
-          nn.BatchNorm1d(hidden_size*2, dtype=torch.float64),
+          nn.BatchNorm1d(hidden_size*2,dtype=torch.float64),
           nn.Linear(in_features=hidden_size*2, out_features=hidden_size*2, dtype=torch.float64),
           nn.LeakyReLU(),
           nn.BatchNorm1d(hidden_size*2, dtype=torch.float64),
+          nn.Linear(in_features=hidden_size*2, out_features=hidden_size, dtype=torch.float64),
+          nn.LeakyReLU(),
+          nn.BatchNorm1d(hidden_size, dtype=torch.float64),
           nn.Dropout(dropout_rate),
-          nn.Linear(in_features=hidden_size*2, out_features=num_classes, dtype=torch.float64),
+          nn.Linear(in_features=hidden_size, out_features=num_classes, dtype=torch.float64),
+          nn.Sigmoid()
+      )
+        
+        print_trainable_parameters(self)
+
+    def forward(self, data):
+        return self.model(data)
+    
+
+
+class ClsModel3(nn.Module):
+    def __init__(self, input_size, hidden_size, num_classes, dropout_rate=0.5):
+        super().__init__()
+        self.model = nn.Sequential(
+          nn.Linear(in_features=input_size, out_features=hidden_size*2, dtype=torch.float64),
+          nn.LeakyReLU(),
+          nn.BatchNorm1d(hidden_size*2, dtype=torch.float64),
+          nn.Linear(in_features=hidden_size*2, out_features=hidden_size*3, dtype=torch.float64),
+          nn.LeakyReLU(),
+          nn.Dropout(dropout_rate),
+          nn.BatchNorm1d(hidden_size*3, dtype=torch.float64),
+          nn.Linear(in_features=hidden_size*3, out_features=hidden_size*2, dtype=torch.float64),
+          nn.LeakyReLU(),
+          nn.BatchNorm1d(hidden_size*2, dtype=torch.float64),
+          nn.Linear(in_features=hidden_size*2, out_features=hidden_size, dtype=torch.float64),
+          nn.LeakyReLU(),
+          nn.BatchNorm1d(hidden_size, dtype=torch.float64),
+          nn.Dropout(dropout_rate),
+          nn.Linear(in_features=hidden_size, out_features=num_classes, dtype=torch.float64),
           nn.Sigmoid()
       )
         
@@ -69,7 +98,7 @@ class ClsModel2(nn.Module):
 
 
 def save_model(model, optimizer, epoch, loss, filename, scheduler=None):
-        path = "saved_models/"+filename + '.pt'
+        path = filename + '.pt'
         save_dict = {
             'epoch': epoch,
             'model_state_dict': model.state_dict(),
